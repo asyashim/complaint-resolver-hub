@@ -69,7 +69,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: { name }
+        data: { 
+          name,
+          student_id: studentId || null
+        }
       }
     });
 
@@ -79,22 +82,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (data.user) {
-      if (studentId) {
-        await supabase
-          .from("profiles")
-          .update({ student_id: studentId })
-          .eq("id", data.user.id);
-      }
-
-      await supabase
-        .from("user_roles")
-        .insert({
-          user_id: data.user.id,
-          role: studentId ? "student" : "admin"
-        });
-
       toast.success("Account created successfully!");
-      navigate(studentId ? "/student" : "/admin");
+      // The trigger will handle profile and role creation
+      // Wait a moment for the trigger to complete
+      setTimeout(() => {
+        navigate(studentId ? "/student" : "/admin");
+      }, 500);
     }
   };
 
