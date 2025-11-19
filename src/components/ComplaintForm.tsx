@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { Upload, X } from "lucide-react";
+import { Upload, X, AlertCircle } from "lucide-react";
 
 interface ComplaintFormProps {
   onSuccess: () => void;
@@ -20,6 +21,40 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
   const [category, setCategory] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [complaintsThisWeek, setComplaintsThisWeek] = useState(0);
+  const [checkingLimit, setCheckingLimit] = useState(true);
+
+  const MAX_COMPLAINTS_PER_WEEK = 3;
+  const remainingComplaints = MAX_COMPLAINTS_PER_WEEK - complaintsThisWeek;
+  const canSubmit = remainingComplaints > 0;
+
+  useEffect(() => {
+    const fetchComplaintCount = async () => {
+      if (!user) return;
+      
+      setCheckingLimit(true);
+      try {
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const { count, error } = await supabase
+          .from("complaints")
+          .select("*", { count: "exact", head: true })
+          .eq("student_id", user.id)
+          .gte("created_at", startOfWeek.toISOString());
+
+        if (error) throw error;
+        setComplaintsThisWeek(count || 0);
+      } catch (error: any) {
+        console.error("Error fetching complaint count:", error);
+      } finally {
+        setCheckingLimit(false);
+      }
+    };
+
+    fetchComplaintCount();
+  }, [user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -80,7 +115,11 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
       toast.success("Complaint submitted successfully!");
       onSuccess();
     } catch (error: any) {
-      toast.error(error.message || "Failed to submit complaint");
+      if (error.message?.includes("policy")) {
+        toast.error("You have reached the maximum of 3 complaints per week");
+      } else {
+        toast.error(error.message || "Failed to submit complaint");
+      }
     } finally {
       setLoading(false);
     }
@@ -94,6 +133,19 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
           Please provide details about your issue
         </p>
       </div>
+
+      {!checkingLimit && (
+        <Alert variant={canSubmit ? "default" : "destructive"}>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {canSubmit ? (
+              <>You can submit <strong>{remainingComplaints}</strong> more complaint{remainingComplaints !== 1 ? 's' : ''} this week</>
+            ) : (
+              <>You have reached the weekly limit of 3 complaints. Please try again next week.</>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="title">Title *</Label>
@@ -176,8 +228,11 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
       </div>
 
       <div className="flex gap-2 justify-end">
-        <Button type="submit" disabled={loading}>
-          {loading ? "Submitting..." : "Submit Complaint"}
+        <Button 
+          type="submit" 
+          disabled={loading || !canSubmit || checkingLimit}
+        >
+          {checkingLimit ? "Checking limit..." : loading ? "Submitting..." : "Submit Complaint"}
         </Button>
       </div>
     </form>
