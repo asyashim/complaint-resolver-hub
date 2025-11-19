@@ -164,6 +164,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      count_user_complaints_this_week: {
+        Args: { _user_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
