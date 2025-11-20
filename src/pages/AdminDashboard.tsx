@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Filter } from "lucide-react";
 import { ComplaintList } from "@/components/ComplaintList";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
@@ -62,10 +63,13 @@ export default function AdminDashboard() {
               <p className="text-sm text-muted-foreground">Welcome, {profile.name}</p>
             )}
           </div>
-          <Button onClick={signOut} variant="outline" size="sm">
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Button onClick={signOut} variant="outline" size="sm">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 

@@ -6,6 +6,7 @@ import { Plus, LogOut, FileText } from "lucide-react";
 import { ComplaintForm } from "@/components/ComplaintForm";
 import { ComplaintList } from "@/components/ComplaintList";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export default function StudentDashboard() {
   const { user, signOut } = useAuth();
@@ -58,10 +59,13 @@ export default function StudentDashboard() {
               </p>
             )}
           </div>
-          <Button onClick={signOut} variant="outline" size="sm">
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Button onClick={signOut} variant="outline" size="sm">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
