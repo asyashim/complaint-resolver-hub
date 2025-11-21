@@ -159,12 +159,12 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
           
           <div className="space-y-2">
             <Label htmlFor="assigned">Assign To Staff</Label>
-            <Select value={assignedTo} onValueChange={setAssignedTo}>
+            <Select value={assignedTo || "unassigned"} onValueChange={(value) => setAssignedTo(value === "unassigned" ? "" : value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select staff member" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {staffMembers.map((staff) => (
                   <SelectItem key={staff.id} value={staff.id}>
                     {staff.name} - {staff.role.replace("_", " ")}
