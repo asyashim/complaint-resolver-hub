@@ -44,6 +44,13 @@ export type Database = {
             foreignKeyName: "attachments_complaint_id_fkey"
             columns: ["complaint_id"]
             isOneToOne: false
+            referencedRelation: "complaint_sla_status"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachments_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
             referencedRelation: "complaints"
             referencedColumns: ["id"]
           },
@@ -56,6 +63,7 @@ export type Database = {
           category: Database["public"]["Enums"]["complaint_category"]
           created_at: string | null
           description: string
+          due_date: string | null
           id: string
           is_anonymous: boolean
           resolution_note: string | null
@@ -70,6 +78,7 @@ export type Database = {
           category: Database["public"]["Enums"]["complaint_category"]
           created_at?: string | null
           description: string
+          due_date?: string | null
           id?: string
           is_anonymous?: boolean
           resolution_note?: string | null
@@ -84,6 +93,7 @@ export type Database = {
           category?: Database["public"]["Enums"]["complaint_category"]
           created_at?: string | null
           description?: string
+          due_date?: string | null
           id?: string
           is_anonymous?: boolean
           resolution_note?: string | null
@@ -243,9 +253,38 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      complaint_sla_status: {
+        Row: {
+          assigned_staff_name: string | null
+          assigned_staff_role: Database["public"]["Enums"]["staff_role"] | null
+          assigned_to: string | null
+          category: Database["public"]["Enums"]["complaint_category"] | null
+          created_at: string | null
+          due_date: string | null
+          hours_remaining: number | null
+          id: string | null
+          sla_status: string | null
+          status: Database["public"]["Enums"]["complaint_status"] | null
+          title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaints_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      calculate_sla_due_date: {
+        Args: {
+          complaint_category: Database["public"]["Enums"]["complaint_category"]
+        }
+        Returns: string
+      }
       count_user_complaints_this_week: {
         Args: { _user_id: string }
         Returns: number

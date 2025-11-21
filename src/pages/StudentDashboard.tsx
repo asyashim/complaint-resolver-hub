@@ -82,6 +82,32 @@ export default function StudentDashboard() {
           </Button>
         </div>
 
+        <div className="mb-6 bg-muted/50 rounded-lg p-4">
+          <h3 className="font-semibold mb-2 text-sm">Resolution Timelines (SLA)</h3>
+          <div className="grid gap-2 text-xs">
+            <div className="flex justify-between">
+              <span>🎓 Academic issues</span>
+              <span className="font-medium">3 days</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🏠 Hostel issues</span>
+              <span className="font-medium">2 days</span>
+            </div>
+            <div className="flex justify-between">
+              <span>💻 Technical/IT issues</span>
+              <span className="font-medium">24 hours</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🏗️ Infrastructure issues</span>
+              <span className="font-medium">24 hours</span>
+            </div>
+            <div className="flex justify-between">
+              <span>📋 Other issues</span>
+              <span className="font-medium">3 days</span>
+            </div>
+          </div>
+        </div>
+
         <ComplaintList complaints={complaints} isAdmin={false} onUpdate={fetchComplaints} />
 
         <Dialog open={showForm} onOpenChange={setShowForm}>

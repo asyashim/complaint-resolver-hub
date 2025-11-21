@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NotificationBell } from "@/components/NotificationBell";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StaffManagement } from "@/components/StaffManagement";
+import { SLADashboard } from "@/components/SLADashboard";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
@@ -80,6 +81,7 @@ export default function AdminDashboard() {
         <Tabs defaultValue="complaints" className="space-y-6">
           <TabsList>
             <TabsTrigger value="complaints">Complaints</TabsTrigger>
+            <TabsTrigger value="sla">SLA Dashboard</TabsTrigger>
             <TabsTrigger value="staff">Staff Management</TabsTrigger>
           </TabsList>
 
@@ -128,6 +130,10 @@ export default function AdminDashboard() {
             </div>
 
             <ComplaintList complaints={complaints} isAdmin={true} onUpdate={fetchComplaints} />
+          </TabsContent>
+
+          <TabsContent value="sla">
+            <SLADashboard />
           </TabsContent>
 
           <TabsContent value="staff">

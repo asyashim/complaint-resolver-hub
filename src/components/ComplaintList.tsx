@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { ComplaintDetail } from "./ComplaintDetail";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { SLAIndicator } from "./SLAIndicator";
 
 interface ComplaintListProps {
   complaints: any[];
@@ -70,6 +71,12 @@ export function ComplaintList({ complaints, isAdmin, onUpdate }: ComplaintListPr
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {complaint.description}
               </p>
+              
+              <SLAIndicator 
+                dueDate={complaint.due_date} 
+                status={complaint.status}
+                showDetails={false}
+              />
               
               <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
