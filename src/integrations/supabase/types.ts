@@ -56,6 +56,7 @@ export type Database = {
           created_at: string | null
           description: string
           id: string
+          is_anonymous: boolean
           resolution_note: string | null
           status: Database["public"]["Enums"]["complaint_status"]
           student_id: string
@@ -68,6 +69,7 @@ export type Database = {
           created_at?: string | null
           description: string
           id?: string
+          is_anonymous?: boolean
           resolution_note?: string | null
           status?: Database["public"]["Enums"]["complaint_status"]
           student_id: string
@@ -80,6 +82,7 @@ export type Database = {
           created_at?: string | null
           description?: string
           id?: string
+          is_anonymous?: boolean
           resolution_note?: string | null
           status?: Database["public"]["Enums"]["complaint_status"]
           student_id?: string

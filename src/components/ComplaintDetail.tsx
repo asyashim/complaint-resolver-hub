@@ -78,12 +78,17 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
             <Clock className="h-4 w-4" />
             Submitted on {format(new Date(complaint.created_at), "MMM dd, yyyy 'at' HH:mm")}
           </div>
-          {complaint.profiles && (
+          {complaint.profiles && !complaint.is_anonymous && (
             <div className="flex items-center gap-1">
               <User className="h-4 w-4" />
               {complaint.profiles.name}
               {complaint.profiles.student_id && ` (${complaint.profiles.student_id})`}
             </div>
+          )}
+          {complaint.is_anonymous && isAdmin && (
+            <Badge variant="outline" className="text-xs">
+              Anonymous Complaint
+            </Badge>
           )}
         </div>
       </div>

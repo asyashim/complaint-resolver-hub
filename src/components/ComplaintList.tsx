@@ -77,12 +77,18 @@ export function ComplaintList({ complaints, isAdmin, onUpdate }: ComplaintListPr
                   {format(new Date(complaint.created_at), "MMM dd, yyyy")}
                 </div>
                 
-                {isAdmin && complaint.profiles && (
+                {isAdmin && complaint.profiles && !complaint.is_anonymous && (
                   <div className="flex items-center gap-1">
                     <User className="h-3 w-3" />
                     {complaint.profiles.name}
                     {complaint.profiles.student_id && ` (${complaint.profiles.student_id})`}
                   </div>
+                )}
+
+                {isAdmin && complaint.is_anonymous && (
+                  <Badge variant="outline" className="text-xs">
+                    Anonymous
+                  </Badge>
                 )}
 
                 {complaint.attachments && complaint.attachments.length > 0 && (
