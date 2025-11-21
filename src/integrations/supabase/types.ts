@@ -52,6 +52,7 @@ export type Database = {
       complaints: {
         Row: {
           admin_id: string | null
+          assigned_to: string | null
           category: Database["public"]["Enums"]["complaint_category"]
           created_at: string | null
           description: string
@@ -65,6 +66,7 @@ export type Database = {
         }
         Insert: {
           admin_id?: string | null
+          assigned_to?: string | null
           category: Database["public"]["Enums"]["complaint_category"]
           created_at?: string | null
           description: string
@@ -78,6 +80,7 @@ export type Database = {
         }
         Update: {
           admin_id?: string | null
+          assigned_to?: string | null
           category?: Database["public"]["Enums"]["complaint_category"]
           created_at?: string | null
           description?: string
@@ -95,6 +98,13 @@ export type Database = {
             columns: ["admin_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "complaints_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "staff"
             referencedColumns: ["id"]
           },
           {
@@ -166,6 +176,42 @@ export type Database = {
         }
         Relationships: []
       }
+      staff: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          email: string
+          id: string
+          is_active: boolean
+          name: string
+          role: Database["public"]["Enums"]["staff_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          email: string
+          id?: string
+          is_active?: boolean
+          name: string
+          role: Database["public"]["Enums"]["staff_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          role?: Database["public"]["Enums"]["staff_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -221,6 +267,7 @@ export type Database = {
         | "infrastructure"
         | "other"
       complaint_status: "open" | "in_progress" | "resolved" | "closed"
+      staff_role: "warden" | "hod" | "transport_officer" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -357,6 +404,7 @@ export const Constants = {
         "other",
       ],
       complaint_status: ["open", "in_progress", "resolved", "closed"],
+      staff_role: ["warden", "hod", "transport_officer", "admin"],
     },
   },
 } as const

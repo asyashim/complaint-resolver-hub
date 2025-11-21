@@ -6,6 +6,8 @@ import { LogOut, Filter } from "lucide-react";
 import { ComplaintList } from "@/components/ComplaintList";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NotificationBell } from "@/components/NotificationBell";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StaffManagement } from "@/components/StaffManagement";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
@@ -37,7 +39,8 @@ export default function AdminDashboard() {
       .select(`
         *,
         profiles!complaints_student_id_fkey (name, student_id, email),
-        attachments (*)
+        attachments (*),
+        staff (id, name, role, email)
       `)
       .order("created_at", { ascending: false });
 
@@ -74,50 +77,63 @@ export default function AdminDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">All Complaints</h2>
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Filters:</span>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                </SelectContent>
-              </Select>
+        <Tabs defaultValue="complaints" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="complaints">Complaints</TabsTrigger>
+            <TabsTrigger value="staff">Staff Management</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="complaints" className="space-y-6">
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">All Complaints</h2>
+                <div className="flex items-center gap-2">
+                  <Filter className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Filters:</span>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="resolved">Resolved</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex-1 min-w-[200px]">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter by category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="academic">Academic</SelectItem>
+                      <SelectItem value="technical">Technical</SelectItem>
+                      <SelectItem value="hostel">Hostel</SelectItem>
+                      <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="academic">Academic</SelectItem>
-                  <SelectItem value="technical">Technical</SelectItem>
-                  <SelectItem value="hostel">Hostel</SelectItem>
-                  <SelectItem value="infrastructure">Infrastructure</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
+            <ComplaintList complaints={complaints} isAdmin={true} onUpdate={fetchComplaints} />
+          </TabsContent>
 
-        <ComplaintList complaints={complaints} isAdmin={true} onUpdate={fetchComplaints} />
+          <TabsContent value="staff">
+            <StaffManagement />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

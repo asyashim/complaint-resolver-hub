@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Clock, User, Tag, FileText, Download } from "lucide-react";
+import { Clock, User, Tag, FileText, Download, UserCheck } from "lucide-react";
 
 interface ComplaintDetailProps {
   complaint: any;
@@ -34,6 +34,29 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
   const [status, setStatus] = useState(complaint.status);
   const [resolutionNote, setResolutionNote] = useState(complaint.resolution_note || "");
   const [loading, setLoading] = useState(false);
+  const [staffMembers, setStaffMembers] = useState<any[]>([]);
+  const [assignedTo, setAssignedTo] = useState(complaint.assigned_to || "");
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchStaff();
+    }
+  }, [isAdmin]);
+
+  const fetchStaff = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("staff")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+
+      if (error) throw error;
+      setStaffMembers(data || []);
+    } catch (error) {
+      console.error("Error fetching staff:", error);
+    }
+  };
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -43,6 +66,7 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
         .update({
           status,
           resolution_note: resolutionNote,
+          assigned_to: assignedTo || null,
           admin_id: (await supabase.auth.getUser()).data.user?.id
         })
         .eq("id", complaint.id);
@@ -90,6 +114,12 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
               Anonymous Complaint
             </Badge>
           )}
+          {complaint.staff && (
+            <div className="flex items-center gap-1">
+              <UserCheck className="h-4 w-4" />
+              Assigned to: {complaint.staff.name} ({complaint.staff.role.replace("_", " ")})
+            </div>
+          )}
         </div>
       </div>
 
@@ -128,6 +158,23 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
           <h3 className="text-lg font-semibold">Admin Actions</h3>
           
           <div className="space-y-2">
+            <Label htmlFor="assigned">Assign To Staff</Label>
+            <Select value={assignedTo} onValueChange={setAssignedTo}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select staff member" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Unassigned</SelectItem>
+                {staffMembers.map((staff) => (
+                  <SelectItem key={staff.id} value={staff.id}>
+                    {staff.name} - {staff.role.replace("_", " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="status">Update Status</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger>
@@ -164,6 +211,21 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
           <Label className="text-base font-semibold">Admin Response</Label>
           <div className="bg-accent/10 rounded-lg p-4">
             <p className="text-sm whitespace-pre-wrap">{complaint.resolution_note}</p>
+          </div>
+        </div>
+      )}
+
+      {!isAdmin && complaint.staff && (
+        <div className="space-y-2 border-t pt-6">
+          <Label className="text-base font-semibold flex items-center gap-2">
+            <UserCheck className="h-4 w-4" />
+            Assigned Staff
+          </Label>
+          <div className="bg-muted rounded-lg p-4">
+            <p className="text-sm font-medium">{complaint.staff.name}</p>
+            <p className="text-xs text-muted-foreground">
+              {complaint.staff.role.replace("_", " ")} • {complaint.staff.email}
+            </p>
           </div>
         </div>
       )}
