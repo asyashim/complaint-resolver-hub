@@ -20,6 +20,7 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [loading, setLoading] = useState(false);
   const [complaintsThisWeek, setComplaintsThisWeek] = useState(0);
   const [checkingLimit, setCheckingLimit] = useState(true);
@@ -81,7 +82,8 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
           title,
           description,
           category: category as "academic" | "technical" | "hostel" | "infrastructure" | "other",
-          status: "open"
+          status: "open",
+          is_anonymous: isAnonymous
         })
         .select()
         .single();
@@ -184,6 +186,19 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
           rows={6}
           placeholder="Provide detailed information about your complaint"
         />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="anonymous"
+          checked={isAnonymous}
+          onChange={(e) => setIsAnonymous(e.target.checked)}
+          className="h-4 w-4 rounded border-input"
+        />
+        <Label htmlFor="anonymous" className="text-sm font-normal cursor-pointer">
+          Submit anonymously (your identity will be hidden from admins)
+        </Label>
       </div>
 
       <div className="space-y-2">
