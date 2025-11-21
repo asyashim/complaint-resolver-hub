@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Clock, User, Tag, FileText, Download, UserCheck } from "lucide-react";
+import { SLAIndicator } from "./SLAIndicator";
 
 interface ComplaintDetailProps {
   complaint: any;
@@ -120,6 +121,15 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
               Assigned to: {complaint.staff.name} ({complaint.staff.role.replace("_", " ")})
             </div>
           )}
+        </div>
+
+        {/* SLA Indicator */}
+        <div className="mt-3">
+          <SLAIndicator 
+            dueDate={complaint.due_date} 
+            status={complaint.status}
+            showDetails={true}
+          />
         </div>
       </div>
 
