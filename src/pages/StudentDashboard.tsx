@@ -35,7 +35,8 @@ export default function StudentDashboard() {
       .from("complaints")
       .select(`
         *,
-        attachments (*)
+        attachments (*),
+        staff (id, name, role, email)
       `)
       .eq("student_id", user?.id)
       .order("created_at", { ascending: false });
