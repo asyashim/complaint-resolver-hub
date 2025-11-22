@@ -7,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Clock, User, Tag, FileText, Download, UserCheck } from "lucide-react";
+import { Clock, User, Tag, FileText, Download, UserCheck, MessageSquare } from "lucide-react";
 import { SLAIndicator } from "./SLAIndicator";
+import { StarRating } from "./StarRating";
 
 interface ComplaintDetailProps {
   complaint: any;
@@ -37,6 +38,9 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
   const [loading, setLoading] = useState(false);
   const [staffMembers, setStaffMembers] = useState<any[]>([]);
   const [assignedTo, setAssignedTo] = useState(complaint.assigned_to || "");
+  const [rating, setRating] = useState(complaint.rating || 0);
+  const [feedbackComment, setFeedbackComment] = useState(complaint.feedback_comment || "");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   useEffect(() => {
     if (isAdmin) {
@@ -236,6 +240,98 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
             <p className="text-xs text-muted-foreground">
               {complaint.staff.role.replace("_", " ")} • {complaint.staff.email}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Student Feedback Section */}
+      {!isAdmin && (status === "resolved" || status === "closed") && !complaint.rating && (
+        <div className="space-y-4 border-t pt-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            How satisfied are you with the resolution?
+          </h3>
+          
+          <div className="space-y-2">
+            <Label>Rating</Label>
+            <div className="flex items-center gap-3">
+              <StarRating rating={rating} onRatingChange={setRating} size="lg" />
+              {rating > 0 && (
+                <span className="text-sm text-muted-foreground">
+                  {rating === 1 && "Very Dissatisfied"}
+                  {rating === 2 && "Dissatisfied"}
+                  {rating === 3 && "Neutral"}
+                  {rating === 4 && "Satisfied"}
+                  {rating === 5 && "Very Satisfied"}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="feedback">Additional Comments (Optional)</Label>
+            <Textarea
+              id="feedback"
+              value={feedbackComment}
+              onChange={(e) => setFeedbackComment(e.target.value)}
+              rows={3}
+              placeholder="Tell us more about your experience..."
+            />
+          </div>
+
+          <Button 
+            onClick={async () => {
+              if (rating === 0) {
+                toast.error("Please select a rating");
+                return;
+              }
+
+              setSubmittingFeedback(true);
+              try {
+                const { error } = await supabase
+                  .from("complaints")
+                  .update({
+                    rating,
+                    feedback_comment: feedbackComment || null,
+                    feedback_submitted_at: new Date().toISOString()
+                  })
+                  .eq("id", complaint.id);
+
+                if (error) throw error;
+
+                toast.success("Thank you for your feedback!");
+                onUpdate();
+              } catch (error: any) {
+                toast.error(error.message || "Failed to submit feedback");
+              } finally {
+                setSubmittingFeedback(false);
+              }
+            }}
+            disabled={submittingFeedback || rating === 0}
+            className="w-full"
+          >
+            {submittingFeedback ? "Submitting..." : "Submit Feedback"}
+          </Button>
+        </div>
+      )}
+
+      {/* Display Feedback */}
+      {complaint.rating && (
+        <div className="space-y-2 border-t pt-6">
+          <Label className="text-base font-semibold flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Student Feedback
+          </Label>
+          <div className="bg-accent/10 rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <StarRating rating={complaint.rating} readonly size="md" />
+              <span className="text-xs text-muted-foreground">
+                {format(new Date(complaint.feedback_submitted_at), "MMM dd, yyyy")}
+              </span>
+            </div>
+            {complaint.feedback_comment && (
+              <p className="text-sm whitespace-pre-wrap">{complaint.feedback_comment}</p>
+            )}
           </div>
         </div>
       )}
