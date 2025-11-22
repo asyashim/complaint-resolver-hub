@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Clock, TrendingUp } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, TrendingUp, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { StarRating } from "./StarRating";
 
 interface SLAStats {
   total: number;
@@ -12,6 +13,8 @@ interface SLAStats {
   warning: number;
   onTrack: number;
   complianceRate: number;
+  averageRating: number;
+  totalFeedback: number;
 }
 
 export function SLADashboard() {
@@ -22,7 +25,9 @@ export function SLADashboard() {
     urgent: 0,
     warning: 0,
     onTrack: 0,
-    complianceRate: 0
+    complianceRate: 0,
+    averageRating: 0,
+    totalFeedback: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +39,7 @@ export function SLADashboard() {
     try {
       const { data, error } = await supabase
         .from("complaints")
-        .select("id, status, due_date");
+        .select("id, status, due_date, rating");
 
       if (error) throw error;
 
@@ -73,6 +78,12 @@ export function SLADashboard() {
       const compliant = completed + onTrack + warning + urgent;
       const complianceRate = total > 0 ? Math.round((compliant / total) * 100) : 0;
 
+      // Calculate feedback statistics
+      const complaintsWithRating = complaints.filter(c => c.rating);
+      const totalFeedback = complaintsWithRating.length;
+      const sumRatings = complaintsWithRating.reduce((sum, c) => sum + (c.rating || 0), 0);
+      const averageRating = totalFeedback > 0 ? Number((sumRatings / totalFeedback).toFixed(1)) : 0;
+
       setStats({
         total,
         completed,
@@ -80,7 +91,9 @@ export function SLADashboard() {
         urgent,
         warning,
         onTrack,
-        complianceRate
+        complianceRate,
+        averageRating,
+        totalFeedback
       });
     } catch (error) {
       console.error("Error fetching SLA stats:", error);
@@ -102,7 +115,7 @@ export function SLADashboard() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Complaints</CardTitle>
@@ -149,6 +162,22 @@ export function SLADashboard() {
             <div className="text-2xl font-bold text-success">{stats.onTrack}</div>
             <p className="text-xs text-muted-foreground">
               Within SLA timeline
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Satisfaction</CardTitle>
+            <Star className="h-4 w-4 text-yellow-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold">{stats.averageRating}</span>
+              <StarRating rating={Math.round(stats.averageRating)} readonly size="sm" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {stats.totalFeedback} feedback responses
             </p>
           </CardContent>
         </Card>
