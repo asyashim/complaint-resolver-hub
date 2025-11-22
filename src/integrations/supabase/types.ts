@@ -56,6 +56,45 @@ export type Database = {
           },
         ]
       }
+      complaint_messages: {
+        Row: {
+          complaint_id: string
+          created_at: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          complaint_id: string
+          created_at?: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          complaint_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaint_messages_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "complaint_sla_status"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "complaint_messages_complaint_id_fkey"
+            columns: ["complaint_id"]
+            isOneToOne: false
+            referencedRelation: "complaints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       complaints: {
         Row: {
           admin_id: string | null
@@ -298,6 +337,16 @@ export type Database = {
         Args: { _user_id: string }
         Returns: number
       }
+      get_stale_complaints: {
+        Args: never
+        Returns: {
+          admin_id: string
+          assigned_to: string
+          complaint_id: string
+          last_updated: string
+          title: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -307,7 +356,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "admin"
+      app_role: "student" | "admin" | "super_admin"
       complaint_category:
         | "academic"
         | "technical"
@@ -443,7 +492,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "admin"],
+      app_role: ["student", "admin", "super_admin"],
       complaint_category: [
         "academic",
         "technical",

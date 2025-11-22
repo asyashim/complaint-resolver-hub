@@ -1,1 +1,7 @@
 project_id = "frmnjheoljpptkimhufn"
+
+[functions.remind-stale-complaints]
+verify_jwt = false
+
+[functions.ai-suggestions]
+verify_jwt = false
