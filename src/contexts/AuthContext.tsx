@@ -7,7 +7,7 @@ import { toast } from "sonner";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  userRole: "student" | "admin" | null;
+  userRole: "student" | "admin" | "super_admin" | null;
   loading: boolean;
   signUp: (email: string, password: string, name: string, studentId?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [userRole, setUserRole] = useState<"student" | "admin" | null>(null);
+  const [userRole, setUserRole] = useState<"student" | "admin" | "super_admin" | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .single();
 
     if (data && !error) {
-      setUserRole(data.role as "student" | "admin");
+      setUserRole(data.role as "student" | "admin" | "super_admin");
     }
     setLoading(false);
   };

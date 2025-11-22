@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Upload, X, AlertCircle } from "lucide-react";
+import { Upload, X, AlertCircle, Sparkles, Loader2 } from "lucide-react";
 
 interface ComplaintFormProps {
   onSuccess: () => void;
@@ -24,6 +25,8 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
   const [loading, setLoading] = useState(false);
   const [complaintsThisWeek, setComplaintsThisWeek] = useState(0);
   const [checkingLimit, setCheckingLimit] = useState(true);
+  const [aiSuggestions, setAiSuggestions] = useState<any>(null);
+  const [loadingAI, setLoadingAI] = useState(false);
 
   const MAX_COMPLAINTS_PER_WEEK = 3;
   const remainingComplaints = MAX_COMPLAINTS_PER_WEEK - complaintsThisWeek;
@@ -56,6 +59,43 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
 
     fetchComplaintCount();
   }, [user]);
+
+  // Debounced AI suggestions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (description.length > 50) {
+        fetchAISuggestions();
+      } else {
+        setAiSuggestions(null);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [description]);
+
+  const fetchAISuggestions = async () => {
+    setLoadingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-suggestions", {
+        body: { complaintText: description },
+      });
+
+      if (error) throw error;
+      setAiSuggestions(data);
+    } catch (error: any) {
+      console.error("AI suggestions error:", error);
+      // Don't show error toast for AI suggestions - it's optional
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  const applySuggestedCategory = () => {
+    if (aiSuggestions?.category) {
+      setCategory(aiSuggestions.category);
+      toast.success("Category applied!");
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -177,15 +217,75 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description *</Label>
+        <Label htmlFor="description" className="flex items-center gap-2">
+          Description *
+          {loadingAI && <Loader2 className="h-3 w-3 animate-spin" />}
+        </Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
           rows={6}
-          placeholder="Provide detailed information about your complaint"
+          placeholder="Provide detailed information about your complaint (AI will suggest category and solutions as you type)..."
         />
+        
+        {aiSuggestions && (
+          <div className="mt-3 p-4 bg-accent/10 rounded-lg border space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Sparkles className="h-4 w-4 text-primary" />
+              AI Suggestions
+            </div>
+
+            {/* Suggested Category */}
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Suggested Category:</p>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="capitalize">
+                  {aiSuggestions.category}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  ({Math.round(aiSuggestions.confidence * 100)}% confidence)
+                </span>
+                {category !== aiSuggestions.category && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={applySuggestedCategory}
+                    className="h-6 text-xs"
+                  >
+                    Apply
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Similar Complaints */}
+            {aiSuggestions.similarComplaints?.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Similar Past Complaints:</p>
+                <ul className="text-xs space-y-1 ml-3">
+                  {aiSuggestions.similarComplaints.slice(0, 3).map((complaint: string, idx: number) => (
+                    <li key={idx} className="list-disc">{complaint}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Suggestions */}
+            {aiSuggestions.suggestions?.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Potential Solutions:</p>
+                <ul className="text-xs space-y-1 ml-3">
+                  {aiSuggestions.suggestions.map((suggestion: string, idx: number) => (
+                    <li key={idx} className="list-disc">{suggestion}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center space-x-2">

@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { Clock, User, Tag, FileText, Download, UserCheck, MessageSquare } from "lucide-react";
 import { SLAIndicator } from "./SLAIndicator";
 import { StarRating } from "./StarRating";
+import { ComplaintChat } from "./ComplaintChat";
 
 interface ComplaintDetailProps {
   complaint: any;
@@ -335,6 +336,11 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
           </div>
         </div>
       )}
+
+      {/* Chat Thread */}
+      <div className="border-t pt-6">
+        <ComplaintChat complaintId={complaint.id} />
+      </div>
     </div>
   );
 }
