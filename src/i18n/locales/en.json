@@ -70,5 +70,18 @@
     "hi": "हिंदी",
     "ml": "മലയാളം",
     "ta": "தமிழ்"
+  },
+  "tags": {
+    "management": "Tag Management",
+    "addTag": "Add Tag",
+    "editTag": "Edit Tag",
+    "createTag": "Create New Tag",
+    "tagName": "Tag Name",
+    "color": "Color",
+    "preview": "preview",
+    "cancel": "Cancel",
+    "update": "Update",
+    "create": "Create",
+    "deleteConfirm": "Are you sure you want to delete this tag?"
   }
 }
