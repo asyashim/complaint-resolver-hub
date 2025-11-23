@@ -9,9 +9,13 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StaffManagement } from "@/components/StaffManagement";
 import { SLADashboard } from "@/components/SLADashboard";
+import { TagManagement } from "@/components/TagManagement";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function AdminDashboard() {
   const { signOut } = useAuth();
+  const { t } = useTranslation();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -62,16 +66,17 @@ export default function AdminDashboard() {
       <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Portal</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("nav.dashboard")}</h1>
             {profile && (
-              <p className="text-sm text-muted-foreground">Welcome, {profile.name}</p>
+              <p className="text-sm text-muted-foreground">{t("dashboard.welcome")}, {profile.name}</p>
             )}
           </div>
           <div className="flex items-center gap-2">
+            <LanguageSelector />
             <NotificationBell />
             <Button onClick={signOut} variant="outline" size="sm">
               <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
+              {t("nav.logout")}
             </Button>
           </div>
         </div>
@@ -80,9 +85,10 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="complaints" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="complaints">Complaints</TabsTrigger>
+            <TabsTrigger value="complaints">{t("nav.complaints")}</TabsTrigger>
             <TabsTrigger value="sla">SLA Dashboard</TabsTrigger>
-            <TabsTrigger value="staff">Staff Management</TabsTrigger>
+            <TabsTrigger value="tags">Tags</TabsTrigger>
+            <TabsTrigger value="staff">{t("nav.staff")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="complaints" className="space-y-6">
@@ -134,6 +140,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="sla">
             <SLADashboard />
+          </TabsContent>
+
+          <TabsContent value="tags">
+            <TagManagement />
           </TabsContent>
 
           <TabsContent value="staff">

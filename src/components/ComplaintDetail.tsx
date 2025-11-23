@@ -11,6 +11,7 @@ import { Clock, User, Tag, FileText, Download, UserCheck, MessageSquare } from "
 import { SLAIndicator } from "./SLAIndicator";
 import { StarRating } from "./StarRating";
 import { ComplaintChat } from "./ComplaintChat";
+import { TagSelector } from "./TagSelector";
 
 interface ComplaintDetailProps {
   complaint: any;
@@ -42,12 +43,14 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
   const [rating, setRating] = useState(complaint.rating || 0);
   const [feedbackComment, setFeedbackComment] = useState(complaint.feedback_comment || "");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [tags, setTags] = useState<any[]>([]);
 
   useEffect(() => {
     if (isAdmin) {
       fetchStaff();
     }
-  }, [isAdmin]);
+    fetchTags();
+  }, [isAdmin, complaint.id]);
 
   const fetchStaff = async () => {
     try {
@@ -61,6 +64,20 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
       setStaffMembers(data || []);
     } catch (error) {
       console.error("Error fetching staff:", error);
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("complaint_tags")
+        .select("tag_id, tags(*)")
+        .eq("complaint_id", complaint.id);
+
+      if (error) throw error;
+      setTags(data?.map(ct => ct.tags).filter(Boolean) || []);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
     }
   };
 
@@ -136,6 +153,31 @@ export function ComplaintDetail({ complaint, isAdmin, onUpdate }: ComplaintDetai
             showDetails={true}
           />
         </div>
+
+        {/* Tags */}
+        {isAdmin && (
+          <div className="mt-4">
+            <Label className="text-sm font-semibold mb-2 block">Tags</Label>
+            <TagSelector 
+              complaintId={complaint.id} 
+              selectedTags={tags} 
+              onTagsChange={fetchTags}
+            />
+          </div>
+        )}
+        {!isAdmin && tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag: any) => (
+              <Badge
+                key={tag.id}
+                style={{ backgroundColor: tag.color }}
+                className="text-white"
+              >
+                #{tag.name}
+              </Badge>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
