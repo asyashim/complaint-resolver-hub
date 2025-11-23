@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, FileText, Users } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, userRole, loading } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && user && userRole) {
@@ -29,9 +32,12 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="flex justify-end mb-4">
+            <LanguageSelector />
+          </div>
           <div className="space-y-4">
             <h1 className="text-5xl font-bold tracking-tight">
-              Brototype Complaint Management
+              {t("app.title")}
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               A streamlined platform for students to submit and track complaints, 

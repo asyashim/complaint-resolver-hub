@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "Student Complaint System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "complaints": "Complaints",
+    "newComplaint": "New Complaint",
+    "staff": "Staff Management",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "studentId": "Student ID",
+    "loginTitle": "Welcome Back",
+    "signupTitle": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "loginButton": "Sign In",
+    "signupButton": "Sign Up"
+  },
+  "complaint": {
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "status": "Status",
+    "submit": "Submit Complaint",
+    "anonymous": "Submit Anonymously",
+    "attachments": "Attachments",
+    "categories": {
+      "academic": "Academic",
+      "technical": "Technical",
+      "hostel": "Hostel",
+      "infrastructure": "Infrastructure",
+      "other": "Other"
+    },
+    "statuses": {
+      "open": "Open",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "aiSuggestions": "AI Suggestions",
+    "chat": "Discussion Thread",
+    "typeMessage": "Type your message...",
+    "send": "Send",
+    "noMessages": "No messages yet. Start the conversation!"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "totalComplaints": "Total Complaints",
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "avgRating": "Avg. Satisfaction",
+    "feedback": "Feedback Count"
+  },
+  "feedback": {
+    "title": "Rate Your Experience",
+    "comment": "Additional Comments (Optional)",
+    "submit": "Submit Feedback",
+    "thankYou": "Thank you for your feedback!"
+  },
+  "language": {
+    "select": "Language",
+    "en": "English",
+    "hi": "हिंदी",
+    "ml": "മലയാളം",
+    "ta": "தமிழ்"
+  }
+}

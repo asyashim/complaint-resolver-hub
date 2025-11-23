@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface Message {
   id: string;
@@ -23,6 +24,7 @@ interface ComplaintChatProps {
 }
 
 export function ComplaintChat({ complaintId }: ComplaintChatProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -150,7 +152,7 @@ export function ComplaintChat({ complaintId }: ComplaintChatProps) {
   return (
     <div className="flex flex-col h-[500px] border rounded-lg">
       <div className="p-4 border-b bg-muted/50">
-        <h3 className="font-semibold">Discussion Thread</h3>
+        <h3 className="font-semibold">{t("complaint.chat")}</h3>
         <p className="text-xs text-muted-foreground">
           Chat with staff about this complaint
         </p>
@@ -160,7 +162,7 @@ export function ComplaintChat({ complaintId }: ComplaintChatProps) {
         <div className="space-y-4">
           {messages.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground py-8">
-              No messages yet. Start the conversation!
+              {t("complaint.noMessages")}
             </p>
           ) : (
             messages.map((msg) => {
@@ -211,7 +213,7 @@ export function ComplaintChat({ complaintId }: ComplaintChatProps) {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="Type your message... (Press Enter to send)"
+            placeholder={t("complaint.typeMessage")}
             rows={2}
             className="resize-none"
           />
