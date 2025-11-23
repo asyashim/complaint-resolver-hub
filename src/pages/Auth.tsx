@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,6 +21,7 @@ export default function Auth() {
   
   const { signUp, signIn, user, userRole } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user && userRole) {
@@ -45,11 +48,14 @@ export default function Auth() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSelector />
+      </div>
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-3xl font-bold">Brototype Complaints</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t("app.title")}</CardTitle>
           <CardDescription>
-            {isLogin ? "Sign in to your account" : "Create a new account"}
+            {isLogin ? t("auth.loginTitle") : t("auth.signupTitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -63,59 +69,59 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t("auth.name")}</Label>
                 <Input
                   id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  placeholder="Enter your full name"
+                  placeholder={t("auth.name")}
                 />
               </div>
             )}
 
             {!isLogin && userType === "student" && (
               <div className="space-y-2">
-                <Label htmlFor="studentId">Student ID</Label>
+                <Label htmlFor="studentId">{t("auth.studentId")}</Label>
                 <Input
                   id="studentId"
                   type="text"
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
                   required
-                  placeholder="Enter your Brototype ID"
+                  placeholder={t("auth.studentId")}
                 />
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="Enter your email"
+                placeholder={t("auth.email")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your password"
+                placeholder={t("auth.password")}
                 minLength={6}
               />
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
+              {loading ? "Please wait..." : isLogin ? t("auth.loginButton") : t("auth.signupButton")}
             </Button>
           </form>
 
@@ -125,7 +131,7 @@ export default function Auth() {
               onClick={() => setIsLogin(!isLogin)}
               className="text-primary hover:underline"
             >
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+              {isLogin ? t("auth.noAccount") : t("auth.alreadyHaveAccount")}
             </button>
           </div>
         </CardContent>

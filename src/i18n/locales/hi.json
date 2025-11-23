@@ -1,0 +1,74 @@
+{
+  "app": {
+    "title": "छात्र शिकायत प्रणाली"
+  },
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "complaints": "शिकायतें",
+    "newComplaint": "नई शिकायत",
+    "staff": "कर्मचारी प्रबंधन",
+    "logout": "लॉगआउट"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "signup": "साइन अप",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "name": "नाम",
+    "studentId": "छात्र आईडी",
+    "loginTitle": "वापस स्वागत है",
+    "signupTitle": "खाता बनाएं",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "noAccount": "खाता नहीं है?",
+    "loginButton": "साइन इन करें",
+    "signupButton": "साइन अप करें"
+  },
+  "complaint": {
+    "title": "शीर्षक",
+    "description": "विवरण",
+    "category": "श्रेणी",
+    "status": "स्थिति",
+    "submit": "शिकायत जमा करें",
+    "anonymous": "गुमनाम रूप से जमा करें",
+    "attachments": "अनुलग्नक",
+    "categories": {
+      "academic": "शैक्षणिक",
+      "technical": "तकनीकी",
+      "hostel": "छात्रावास",
+      "infrastructure": "बुनियादी ढांचा",
+      "other": "अन्य"
+    },
+    "statuses": {
+      "open": "खुला",
+      "in_progress": "प्रगति में",
+      "resolved": "हल हो गया",
+      "closed": "बंद"
+    },
+    "aiSuggestions": "एआई सुझाव",
+    "chat": "चर्चा थ्रेड",
+    "typeMessage": "अपना संदेश लिखें...",
+    "send": "भेजें",
+    "noMessages": "अभी तक कोई संदेश नहीं। बातचीत शुरू करें!"
+  },
+  "dashboard": {
+    "welcome": "स्वागत है",
+    "totalComplaints": "कुल शिकायतें",
+    "pending": "लंबित",
+    "resolved": "हल हो गया",
+    "avgRating": "औसत संतुष्टि",
+    "feedback": "फीडबैक गिनती"
+  },
+  "feedback": {
+    "title": "अपने अनुभव को रेट करें",
+    "comment": "अतिरिक्त टिप्पणियां (वैकल्पिक)",
+    "submit": "फीडबैक जमा करें",
+    "thankYou": "आपकी प्रतिक्रिया के लिए धन्यवाद!"
+  },
+  "language": {
+    "select": "भाषा",
+    "en": "English",
+    "hi": "हिंदी",
+    "ml": "മലയാളം",
+    "ta": "தமிழ்"
+  }
+}

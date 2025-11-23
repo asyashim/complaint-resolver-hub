@@ -7,9 +7,12 @@ import { ComplaintForm } from "@/components/ComplaintForm";
 import { ComplaintList } from "@/components/ComplaintList";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { NotificationBell } from "@/components/NotificationBell";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function StudentDashboard() {
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [complaints, setComplaints] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
@@ -53,18 +56,19 @@ export default function StudentDashboard() {
       <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Student Portal</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("nav.dashboard")}</h1>
             {profile && (
               <p className="text-sm text-muted-foreground">
-                Welcome, {profile.name} {profile.student_id && `(${profile.student_id})`}
+                {t("dashboard.welcome")}, {profile.name} {profile.student_id && `(${profile.student_id})`}
               </p>
             )}
           </div>
           <div className="flex items-center gap-2">
+            <LanguageSelector />
             <NotificationBell />
             <Button onClick={signOut} variant="outline" size="sm">
               <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
+              {t("nav.logout")}
             </Button>
           </div>
         </div>
@@ -74,11 +78,11 @@ export default function StudentDashboard() {
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold">My Complaints</h2>
+            <h2 className="text-xl font-semibold">{t("nav.complaints")}</h2>
           </div>
           <Button onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            New Complaint
+            {t("nav.newComplaint")}
           </Button>
         </div>
 

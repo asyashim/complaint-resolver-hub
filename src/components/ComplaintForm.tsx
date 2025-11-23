@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Upload, X, AlertCircle, Sparkles, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ComplaintFormProps {
   onSuccess: () => void;
@@ -17,6 +18,7 @@ interface ComplaintFormProps {
 
 export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -297,12 +299,12 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
           className="h-4 w-4 rounded border-input"
         />
         <Label htmlFor="anonymous" className="text-sm font-normal cursor-pointer">
-          Submit anonymously (your identity will be hidden from admins)
+          {t("complaint.anonymous")}
         </Label>
       </div>
 
       <div className="space-y-2">
-        <Label>Attachments (optional)</Label>
+        <Label>{t("complaint.attachments")}</Label>
         <div className="space-y-2">
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted hover:bg-muted/80 transition-colors">
@@ -347,7 +349,7 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
           type="submit" 
           disabled={loading || !canSubmit || checkingLimit}
         >
-          {checkingLimit ? "Checking limit..." : loading ? "Submitting..." : "Submit Complaint"}
+          {checkingLimit ? "Checking limit..." : loading ? "Submitting..." : t("complaint.submit")}
         </Button>
       </div>
     </form>
